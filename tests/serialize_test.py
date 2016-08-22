@@ -71,6 +71,9 @@ def test_multiple_boxed_type(fx_layered_boxed_types):
             {datetime.date(2016, 8, 5), datetime.date(2016, 8, 6)},
             ['2016-08-05', '2016-08-06']
         ),
+        (
+            {'a': 'b'}, [{'key': 'a', 'value': 'b'}]
+        ),
     ]
 )
 def test_serialize_meta(d, expect):

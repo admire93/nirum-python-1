@@ -2,7 +2,7 @@ import json
 import typing
 
 from pytest import fixture, raises, mark
-from werkzeug.test import Client as TestClient
+from werkzeug.test import Client as MockClient
 from werkzeug.wrappers import Response
 
 from nirum.constructs import NameDict
@@ -137,7 +137,7 @@ def fx_music_wsgi():
 
 @fixture
 def fx_test_client(fx_music_wsgi):
-    return TestClient(fx_music_wsgi, Response)
+    return MockClient(fx_music_wsgi, Response)
 
 
 def test_wsgi_app_ping(fx_music_wsgi, fx_test_client):

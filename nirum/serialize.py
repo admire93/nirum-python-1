@@ -63,10 +63,13 @@ def serialize_meta(data):
     elif isinstance(data, list):
         d = [serialize_meta(e) for e in data]
     elif isinstance(data, dict):
-        d = {
-            k: serialize_meta(v)
+        d = [
+            {
+                'key': serialize_meta(k),
+                'value': serialize_meta(v)
+            }
             for k, v in data.items()
-        }
+        ]
     else:
         d = data
     return d
