@@ -40,16 +40,13 @@ class MusicService(Service):
         ('get_artist_by_music', 'find_artist'),
     ])
 
-    def get_music_by_artist_name(
-        self,
-        artist_name: str
-    ) -> typing.Sequence[str]:
+    def get_music_by_artist_name(self, artist_name):
         raise NotImplementedError('get_music_by_artist_name')
 
-    def incorrect_return(self) -> str:
+    def incorrect_return(self):
         raise NotImplementedError('incorrect_return')
 
-    def get_artist_by_music(self, music: str) -> str:
+    def get_artist_by_music(self, music):
         raise NotImplementedError('get_artist_by_music')
 
 
@@ -60,16 +57,13 @@ class MusicServiceImpl(MusicService):
         'ed sheeran': ['Thinking out loud', 'Photograph'],
     }
 
-    def get_music_by_artist_name(
-        self,
-        artist_name: str
-    ) -> typing.Sequence[str]:
+    def get_music_by_artist_name(self, artist_name):
         return self.music_map.get(artist_name)
 
-    def incorrect_return(self) -> str:
+    def incorrect_return(self):
         return 1
 
-    def get_artist_by_music(self, music: str) -> str:
+    def get_artist_by_music(self, music):
         for k, v in self.music_map.items():
             if music in v:
                 return k
@@ -90,9 +84,7 @@ class MusicServiceTypeErrorImpl(MusicService):
 
 class MusicServiceClient(Client, MusicService):
 
-    def get_music_by_artist_name(
-        self, artist_name: str
-    ) -> typing.Sequence[str]:
+    def get_music_by_artist_name(self, artist_name):
         meta = self.__nirum_service_methods__['get_music_by_artist_name']
         payload = {meta['_names']['artist_name']: serialize_meta(artist_name)}
         return deserialize_meta(
@@ -105,9 +97,7 @@ class MusicServiceClient(Client, MusicService):
             )
         )
 
-    def get_artist_by_music(
-        self, music: str
-    ) -> typing.Sequence[str]:
+    def get_artist_by_music(self, music):
         meta = self.__nirum_service_methods__['get_artist_by_music']
         payload = {meta['_names']['music']: serialize_meta(music)}
         return deserialize_meta(

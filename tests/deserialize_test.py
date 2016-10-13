@@ -5,6 +5,7 @@ import typing
 
 from pytest import raises, mark
 
+from nirum._compat import utc
 from nirum.serialize import serialize_record_type
 from nirum.deserialize import (deserialize_unboxed_type, deserialize_meta,
                                deserialize_tuple_type,
@@ -128,7 +129,7 @@ def test_deserialize_multiple_unboxed_type(fx_layered_unboxed_types):
             '2016-08-04T01:42:43Z',
             datetime.datetime,
             datetime.datetime(
-                2016, 8, 4, 1, 42, 43, tzinfo=datetime.timezone.utc
+                2016, 8, 4, 1, 42, 43, tzinfo=utc
             )
         ),
         (
@@ -190,21 +191,16 @@ def test_deserialize_primitive_error(data, t):
             datetime.datetime,
             [
                 '2016-08-04T01:29:16Z',
-                '2016-08-05T01:00:01+09:00',
                 '20160804T012916Z',
             ],
             [
                 datetime.datetime(
                     2016, 8, 4, 1, 29, 16,
-                    tzinfo=datetime.timezone.utc
-                ),
-                datetime.datetime(
-                    2016, 8, 5, 1, 0, 1,
-                    tzinfo=datetime.timezone(datetime.timedelta(hours=9))
+                    tzinfo=utc
                 ),
                 datetime.datetime(
                     2016, 8, 4, 1, 29, 16,
-                    tzinfo=datetime.timezone.utc
+                    tzinfo=utc
                 ),
             ],
         ),

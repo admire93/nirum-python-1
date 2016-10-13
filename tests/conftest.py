@@ -43,27 +43,24 @@ class Offset:
 
     __nirum_inner_type__ = float
 
-    def __init__(self, value: float) -> None:
-        validate_unboxed_type(value, float)
+    def __init__(self, value):
         self.value = value
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return (isinstance(other, Offset) and self.value == other.value)
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.value)
 
-    def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
-        return serialize_unboxed_type(self)
+    def __nirum_serialize__(self):
+        return serialize_boxed_type(self)
 
     @classmethod
-    def __nirum_deserialize__(
-        cls: type, value: typing.Mapping[str, typing.Any]
-    ) -> 'Offset':
-        return deserialize_unboxed_type(cls, value)
+    def __nirum_deserialize__(cls, value):
+        return deserialize_boxed_type(cls, value)
 
-    def __hash__(self) -> int:  # noqa
-        return hash((self.__class__, self.value))
+    def __hash__(self): # noqa
+        return hash(self.value)
 
 
 class Point:
@@ -81,36 +78,36 @@ class Point:
         ('left', 'x')
     ])
 
-    def __init__(self, left: Offset, top: Offset) -> None:
+    def __init__(self, left, top):
         self.left = left
         self.top = top
         validate_record_type(self)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1})'.format(
             type(self),
             ', '.join('{}={}'.format(attr, getattr(self, attr))
                       for attr in self.__slots__)
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return isinstance(other, Point) and all(
             getattr(self, attr) == getattr(other, attr)
             for attr in self.__slots__
         )
 
-    def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
+    def __nirum_serialize__(self):
         return serialize_record_type(self)
 
     @classmethod
-    def __nirum_deserialize__(cls: type, values) -> 'Point':
+    def __nirum_deserialize__(cls, values):
         return deserialize_record_type(cls, values)
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash((self.__class__, self.left, self.top))
 
 
-class Shape:
+class Shape(object):
 
     __nirum_union_behind_name__ = 'shape'
     __nirum_field_names__ = NameDict([
@@ -129,11 +126,11 @@ class Shape:
             )
         )
 
-    def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
+    def __nirum_serialize__(self):
         pass
 
     @classmethod
-    def __nirum_deserialize__(cls: type, value) -> 'Shape':
+    def __nirum_deserialize__(cls, value):
         pass
 
 
@@ -150,19 +147,19 @@ class Rectangle(Shape):
     }
     __nirum_tag_names__ = NameDict([])
 
-    def __init__(self, upper_left: Point, lower_right: Point) -> None:
+    def __init__(self, upper_left, lower_right):
         self.upper_left = upper_left
         self.lower_right = lower_right
         validate_union_type(self)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1})'.format(
             type(self),
             ', '.join('{}={}'.format(attr, getattr(self, attr))
                       for attr in self.__slots__)
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return isinstance(other, Rectangle) and all(
             getattr(self, attr) == getattr(other, attr)
             for attr in self.__slots__
@@ -182,19 +179,19 @@ class Circle(Shape):
     }
     __nirum_tag_names__ = NameDict([])
 
-    def __init__(self, origin: Point, radius: Offset) -> None:
+    def __init__(self, origin, radius):
         self.origin = origin
         self.radius = radius
         validate_union_type(self)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1})'.format(
             type(self),
             ', '.join('{}={}'.format(attr, getattr(self, attr))
                       for attr in self.__slots__)
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return isinstance(other, Circle) and all(
             getattr(self, attr) == getattr(other, attr)
             for attr in self.__slots__
@@ -221,31 +218,30 @@ class Location:
         ('lng', 'lng')
     ])
 
-    def __init__(self, name: typing.Optional[str],
-                 lat: decimal.Decimal, lng: decimal.Decimal) -> None:
+    def __init__(self, name, lat, lng):
         self.name = name
         self.lat = lat
         self.lng = lng
         validate_record_type(self)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1})'.format(
             type(self),
             ', '.join('{}={}'.format(attr, getattr(self, attr))
                       for attr in self.__slots__)
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return isinstance(other, Location) and all(
             getattr(self, attr) == getattr(other, attr)
             for attr in self.__slots__
         )
 
-    def __nirum_serialize__(self) -> typing.Mapping[str, typing.Any]:
+    def __nirum_serialize__(self):
         return serialize_record_type(self)
 
     @classmethod
-    def __nirum_deserialize__(cls: type, value) -> 'Location':
+    def __nirum_deserialize__(cls, value):
         return deserialize_record_type(cls, value)
 
 
@@ -288,27 +284,25 @@ class A:
 
     __nirum_inner_type__ = str
 
-    def __init__(self, value: str) -> None:
-        validate_unboxed_type(value, str)
+    def __init__(self, value):
+        validate_boxed_type(value, str)
         self.value = value  # type: Text
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return (isinstance(other, A) and
                 self.value == other.value)
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.value)
 
-    def __nirum_serialize__(self) -> str:
-        return serialize_unboxed_type(self)
+    def __nirum_serialize__(self):
+        return serialize_boxed_type(self)
 
     @classmethod
-    def __nirum_deserialize__(
-        cls: type, value: typing.Mapping[str, typing.Any]
-    ) -> 'A':
-        return deserialize_unboxed_type(cls, value)
+    def __nirum_deserialize__(cls, value):
+        return deserialize_boxed_type(cls, value)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
             type(self), self.value
         )
@@ -318,27 +312,25 @@ class B:
 
     __nirum_inner_type__ = A
 
-    def __init__(self, value: A) -> None:
-        validate_unboxed_type(value, A)
+    def __init__(self, value):
+        validate_boxed_type(value, A)
         self.value = value  # type: A
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return (isinstance(other, B) and
                 self.value == other.value)
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.value)
 
-    def __nirum_serialize__(self) -> str:
-        return serialize_unboxed_type(self)
+    def __nirum_serialize__(self):
+        return serialize_boxed_type(self)
 
     @classmethod
-    def __nirum_deserialize__(
-        cls: type, value: typing.Mapping[str, typing.Any]
-    ) -> 'B':
-        return deserialize_unboxed_type(cls, value)
+    def __nirum_deserialize__(cls, value):
+        return deserialize_boxed_type(cls, value)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
             type(self), self.value
         )
@@ -348,27 +340,25 @@ class C:
 
     __nirum_inner_type__ = B
 
-    def __init__(self, value: B) -> None:
-        validate_unboxed_type(value, B)
+    def __init__(self, value):
+        validate_boxed_type(value, B)
         self.value = value  # type: B
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return (isinstance(other, C) and
                 self.value == other.value)
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.value)
 
-    def __nirum_serialize__(self) -> str:
-        return serialize_unboxed_type(self)
+    def __nirum_serialize__(self):
+        return serialize_boxed_type(self)
 
     @classmethod
-    def __nirum_deserialize__(
-        cls: type, value: typing.Mapping[str, typing.Any]
-    ) -> 'C':
-        return deserialize_unboxed_type(cls, value)
+    def __nirum_deserialize__(cls, value):
+        return deserialize_boxed_type(cls, value)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
             type(self), self.value
         )

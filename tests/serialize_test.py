@@ -4,7 +4,8 @@ import uuid
 
 from pytest import mark
 
-from nirum.serialize import (serialize_unboxed_type, serialize_record_type,
+from nirum._compat import utc
+from nirum.serialize import (serialize_boxed_type, serialize_record_type,
                              serialize_meta, serialize_union_type)
 
 
@@ -61,7 +62,7 @@ def test_multiple_unboxed_type(fx_layered_unboxed_types):
         (decimal.Decimal('3.14'), '3.14'),
         (
             datetime.datetime(2016, 8, 5, 3, 46, 37,
-                              tzinfo=datetime.timezone.utc),
+                              tzinfo=utc),
             '2016-08-05T03:46:37+00:00'
         ),
         (

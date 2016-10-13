@@ -10,6 +10,8 @@ import uuid
 
 from iso8601 import iso8601, parse_date
 
+from ._compat import classname
+
 __all__ = (
     'deserialize_abstract_type',
     'deserialize_boxed_type',
@@ -132,7 +134,7 @@ def deserialize_primitive(cls, data):
         d = cls(data)
     else:
         raise TypeError(
-            "'{0.__qualname__}' is not a primitive type.".format(cls)
+            "'{0}' is not a primitive type.".format(classname(cls))
         )
     return d
 
@@ -207,9 +209,10 @@ def deserialize_record_type(cls, value):
     if '_type' not in value:
         raise ValueError('"_type" field is missing.')
     if not cls.__nirum_record_behind_name__ == value['_type']:
-        raise ValueError('{0.__class__.__name__} expect "_type" equal to'
-                         ' "{0.__nirum_record_behind_name__}"'
-                         ', but found {1}.'.format(cls, value['_type']))
+        raise ValueError(
+            '{0} expect "_type" equal to "{1.__nirum_record_behind_name__}"'
+            ', but found {2}.'.format(classname(cls), cls, value['_type'])
+        )
     args = {}
     behind_names = cls.__nirum_field_names__.behind_names
     for attribute_name, item in value.items():
@@ -235,19 +238,20 @@ def deserialize_union_type(cls, value):
                 break
         else:
             raise ValueError(
-                '{0!r} is not deserialzable tag of '
-                '`{1.__name__}`.'.format(
-                    value, cls
+                '{0!r} is not deserialzable tag of `{1}`.'.format(
+                    value, classname(cls)
                 )
             )
     if not cls.__nirum_union_behind_name__ == value['_type']:
-        raise ValueError('{0.__class__.__name__} expect "_type" equal to'
-                         ' "{0.__nirum_union_behind_name__}"'
-                         ', but found {1}.'.format(cls, value['_type']))
+        raise ValueError('{0} expect "_type" equal to'
+                         ' "{1.__nirum_union_behind_name__}"'
+                         ', but found {2}.'.format(classname(cls), cls,
+                                                   value['_type']))
     if not cls.__nirum_tag__.value == value['_tag']:
-        raise ValueError('{0.__class__.__name__} expect "_tag" equal to'
-                         ' "{0.__nirum_tag__.value}"'
-                         ', but found {1}.'.format(cls, value['_tag']))
+        raise ValueError('{0} expect "_tag" equal to'
+                         ' "{1.__nirum_tag__.value}"'
+                         ', but found {1}.'.format(classname(cls),
+                                                   cls, value['_tag']))
     args = {}
     behind_names = cls.__nirum_tag_names__.behind_names
     for attribute_name, item in value.items():
