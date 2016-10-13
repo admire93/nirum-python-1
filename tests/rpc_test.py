@@ -239,8 +239,8 @@ def test_procedure_bad_request(fx_test_client):
 @mark.parametrize(
     'payload, expected_json',
     [
-        ({'artist_name': 'damien rice'}, ['9 crimes', 'Elephant']),
-        ({'artist_name': 'ed sheeran'}, ['Thinking out loud', 'Photograph']),
+        ({'artist_name': u'damien rice'}, ['9 crimes', 'Elephant']),
+        ({'artist_name': u'ed sheeran'}, ['Thinking out loud', 'Photograph']),
     ]
 )
 def test_wsgi_app_method(fx_test_client, payload, expected_json):

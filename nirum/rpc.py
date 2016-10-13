@@ -303,7 +303,7 @@ class Client:
 
     def make_request(self, request):
         try:
-            response = self.opener.open(request)
+            response = self.opener.open(request, None)
         except urllib.error.URLError as e:
             raise NirumUrlError(e)
         except urllib.error.HTTPError as e:

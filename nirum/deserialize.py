@@ -9,6 +9,7 @@ import typing
 import uuid
 
 from iso8601 import iso8601, parse_date
+from six import PY2, PY3, text_type
 
 from ._compat import classname
 
@@ -26,9 +27,13 @@ __all__ = (
     'is_support_abstract_type',
 )
 _NIRUM_PRIMITIVE_TYPE = {
-    str, float, decimal.Decimal, uuid.UUID, datetime.datetime,
-    datetime.date, bool, int
+    float, decimal.Decimal, uuid.UUID, datetime.datetime,
+    datetime.date, bool, int,
 }
+if PY2:
+    _NIRUM_PRIMITIVE_TYPE.add(unicode)
+elif PY3:
+    _NIRUM_PRIMITIVE_TYPE.add(str)
 
 
 def is_support_abstract_type(t):
@@ -128,7 +133,7 @@ def deserialize_primitive(cls, data):
             d = cls(data)
         except decimal.InvalidOperation:
             raise ValueError("'{}' is not a decimal.".format(data))
-    elif cls is str:
+    elif cls is text_type:
         if not isinstance(data, str):
             raise ValueError("'{}' is not a string.".format(data))
         d = cls(data)

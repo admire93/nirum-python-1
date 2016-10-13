@@ -109,11 +109,11 @@ def test_deserialize_meta_unboxed(fx_unboxed_type, fx_record_type, fx_point,
     assert meta == unboxed
 
 
-def test_deserialize_multiple_unboxed_type(fx_layered_unboxed_types):
-    A, B, C = fx_layered_unboxed_types
-    assert B.__nirum_deserialize__('lorem') == B(A('lorem'))
-    assert C.__nirum_deserialize__('x') == C(B(A('x')))
-    with raises(ValueError):
+def test_deserialize_multiple_boxed_type(fx_layered_boxed_types):
+    A, B, C = fx_layered_boxed_types
+    assert B.__nirum_deserialize__(u'lorem') == B(A(u'lorem'))
+    assert C.__nirum_deserialize__(u'x') == C(B(A(u'x')))
+    with raises(TypeError):
         B.__nirum_deserialize__(1)
 
 
@@ -166,10 +166,11 @@ def test_deserialize_primitive_error(data, t):
         deserialize_primitive(t, data)
 
 
+from six import text_type
 @mark.parametrize(
     'primitive_type, iter_, expect_iter',
     [
-        (str, ['a', 'b'], None),
+        (text_type, [u'a', u'b'], None),
         (float, [3.14, 1.592], None),
         (
             decimal.Decimal,
