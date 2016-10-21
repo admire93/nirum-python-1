@@ -3,6 +3,8 @@ import typing
 import decimal
 import json
 
+from six import text_type
+
 from nirum.serialize import (serialize_record_type, serialize_boxed_type,
                              serialize_meta)
 from nirum.deserialize import (deserialize_record_type, deserialize_boxed_type,
@@ -182,7 +184,7 @@ class Location:
     )
     __nirum_record_behind_name__ = 'location'
     __nirum_field_types__ = {
-        'name': typing.Optional[unicode],
+        'name': typing.Optional[text_type],
         'lat': decimal.Decimal,
         'lng': decimal.Decimal
     }
@@ -221,10 +223,10 @@ class Location:
 
 class A:
 
-    __nirum_boxed_type__ = unicode
+    __nirum_boxed_type__ = text_type
 
     def __init__(self, value):
-        validate_boxed_type(value, unicode)
+        validate_boxed_type(value, text_type)
         self.value = value  # type: Text
 
     def __eq__(self, other):
@@ -307,19 +309,19 @@ class MusicService(Service):
 
     __nirum_service_methods__ = {
         'get_music_by_artist_name': {
-            'artist_name': unicode,
-            '_return': typing.Sequence[unicode],
+            'artist_name': text_type,
+            '_return': typing.Sequence[text_type],
             '_names': NameDict([
                 ('artist_name', 'artist_name')
             ])
         },
         'incorrect_return': {
-            '_return': unicode,
+            '_return': text_type,
             '_names': NameDict([])
         },
         'get_artist_by_music': {
-            'music': unicode,
-            '_return': unicode,
+            'music': text_type,
+            '_return': text_type,
             '_names': NameDict([('music', 'norae')])
         }
     }

@@ -5,13 +5,12 @@
 import json
 import typing
 
+from six.moves import urllib
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.routing import Map, Rule
 from werkzeug.wrappers import Request as WsgiRequest, Response as WsgiResponse
-from six.moves import urllib
 
-from ._compat import classname
 from .constructs import NameDict
 from .deserialize import deserialize_meta
 from .exc import (InvalidNirumServiceMethodNameError,
@@ -23,6 +22,7 @@ from .exc import (InvalidNirumServiceMethodNameError,
                   UnexpectedNirumResponseError)
 from .func import url_endswith_slash
 from .serialize import serialize_meta
+from ._compat import classname
 
 __all__ = 'Client', 'WsgiApp', 'Service', 'client_type', 'service_type'
 JSONType = typing.Mapping[

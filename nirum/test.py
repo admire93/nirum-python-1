@@ -1,10 +1,10 @@
 import socket
 
+from six.moves import urllib
+from six.moves.http_client import HTTPResponse
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
 
-from six.moves import urllib
-from six.moves.http_client import HTTPResponse
 from .func import url_endswith_slash
 from .rpc import WsgiApp
 

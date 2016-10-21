@@ -9,7 +9,7 @@ import typing
 import uuid
 
 from iso8601 import iso8601, parse_date
-from six import PY2, PY3, text_type
+from six import text_type
 
 from ._compat import classname
 
@@ -28,12 +28,8 @@ __all__ = (
 )
 _NIRUM_PRIMITIVE_TYPE = {
     float, decimal.Decimal, uuid.UUID, datetime.datetime,
-    datetime.date, bool, int,
+    datetime.date, bool, int, text_type
 }
-if PY2:
-    _NIRUM_PRIMITIVE_TYPE.add(unicode)
-elif PY3:
-    _NIRUM_PRIMITIVE_TYPE.add(str)
 
 
 def is_support_abstract_type(t):
