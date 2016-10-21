@@ -10,7 +10,7 @@ from nirum.validate import (validate_unboxed_type, validate_record_type,
 def test_validate_unboxed_type():
     assert validate_unboxed_type(3.14, float)
     with raises(TypeError):
-        validate_boxed_type(u'hello', float)
+        validate_unboxed_type(u'hello', float)
 
 
 def test_validate_record_type(fx_point, fx_record_type, fx_offset,
@@ -40,14 +40,14 @@ def test_validate_union_type(fx_rectangle, fx_rectangle_type, fx_point):
 
 def test_validate_layered_boxed_types(fx_layered_boxed_types):
     A, B, C = fx_layered_boxed_types
-    assert validate_boxed_type(u'test', text_type)
-    assert validate_boxed_type(A(u'test'), A)
-    assert validate_boxed_type(B(A(u'test')), B)
+    assert validate_unboxed_type(u'test', text_type)
+    assert validate_unboxed_type(A(u'test'), A)
+    assert validate_unboxed_type(B(A(u'test')), B)
     with raises(TypeError):
-        assert validate_boxed_type(u'test', A)
+        assert validate_unboxed_type(u'test', A)
 
     with raises(TypeError):
-        assert validate_boxed_type(u'test', B)
+        assert validate_unboxed_type(u'test', B)
 
     with raises(TypeError):
-        assert validate_boxed_type(A(u'test'), B)
+        assert validate_unboxed_type(A(u'test'), B)

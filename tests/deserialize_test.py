@@ -114,7 +114,7 @@ def test_deserialize_multiple_boxed_type(fx_layered_boxed_types):
     A, B, C = fx_layered_boxed_types
     assert B.__nirum_deserialize__(u'lorem') == B(A(u'lorem'))
     assert C.__nirum_deserialize__(u'x') == C(B(A(u'x')))
-    with raises(TypeError):
+    with raises(ValueError):
         B.__nirum_deserialize__(1)
 
 

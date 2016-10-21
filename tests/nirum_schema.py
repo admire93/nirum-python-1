@@ -13,7 +13,8 @@ def import_nirum_fixture():
         globals(),
         locals(),
         [
-            'A', 'B', 'C', 'Offset', 'Point', 'Shape', 'Rectangle', 'Circle',
-            'Location', 'MusicService', 'MusicServiceClient',
+            'A', 'B', 'C', 'Circle', 'Location', 'MusicService',
+            'MusicServiceClient', 'Offset', 'Point', 'Rectangle', 'Shape',
+            'Token',
         ]
     )

@@ -7,7 +7,7 @@ nirum_fixture = import_nirum_fixture()
 
 
 @fixture
-def fx_boxed_type():
+def fx_unboxed_type():
     return nirum_fixture.Offset
 
 
@@ -54,3 +54,8 @@ def fx_location_record():
 @fixture
 def fx_shape_type():
     return nirum_fixture.Shape
+
+
+@fixture
+def fx_token_type():
+    return nirum_fixture.Token

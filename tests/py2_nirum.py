@@ -2,14 +2,16 @@ import enum
 import typing
 import decimal
 import json
+import uuid
 
 from six import text_type
 
-from nirum.serialize import (serialize_record_type, serialize_boxed_type,
+from nirum.serialize import (serialize_record_type, serialize_unboxed_type,
                              serialize_meta)
-from nirum.deserialize import (deserialize_record_type, deserialize_boxed_type,
+from nirum.deserialize import (deserialize_record_type,
+                               deserialize_unboxed_type,
                                deserialize_meta)
-from nirum.validate import (validate_boxed_type, validate_record_type,
+from nirum.validate import (validate_unboxed_type, validate_record_type,
                             validate_union_type)
 from nirum.constructs import NameDict, name_dict_type
 from nirum.rpc import Client, Service
@@ -17,7 +19,7 @@ from nirum.rpc import Client, Service
 
 class Offset:
 
-    __nirum_boxed_type__ = float
+    __nirum_inner_type__ = float
 
     def __init__(self, value):
         self.value = value
@@ -29,11 +31,11 @@ class Offset:
         return hash(self.value)
 
     def __nirum_serialize__(self):
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(cls, value):
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __hash__(self): # noqa
         return hash((self.__class__, self.value))
@@ -223,10 +225,10 @@ class Location:
 
 class A:
 
-    __nirum_boxed_type__ = text_type
+    __nirum_inner_type__ = text_type
 
     def __init__(self, value):
-        validate_boxed_type(value, text_type)
+        validate_unboxed_type(value, text_type)
         self.value = value  # type: Text
 
     def __eq__(self, other):
@@ -237,11 +239,11 @@ class A:
         return hash(self.value)
 
     def __nirum_serialize__(self):
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(cls, value):
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
@@ -251,10 +253,10 @@ class A:
 
 class B:
 
-    __nirum_boxed_type__ = A
+    __nirum_inner_type__ = A
 
     def __init__(self, value):
-        validate_boxed_type(value, A)
+        validate_unboxed_type(value, A)
         self.value = value  # type: A
 
     def __eq__(self, other):
@@ -265,11 +267,11 @@ class B:
         return hash(self.value)
 
     def __nirum_serialize__(self):
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(cls, value):
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
@@ -279,10 +281,10 @@ class B:
 
 class C:
 
-    __nirum_boxed_type__ = B
+    __nirum_inner_type__ = B
 
     def __init__(self, value):
-        validate_boxed_type(value, B)
+        validate_unboxed_type(value, B)
         self.value = value  # type: B
 
     def __eq__(self, other):
@@ -293,11 +295,11 @@ class C:
         return hash(self.value)
 
     def __nirum_serialize__(self):
-        return serialize_boxed_type(self)
+        return serialize_unboxed_type(self)
 
     @classmethod
     def __nirum_deserialize__(cls, value):
-        return deserialize_boxed_type(cls, value)
+        return deserialize_unboxed_type(cls, value)
 
     def __repr__(self):
         return '{0.__module__}.{0.__qualname__}({1!r})'.format(
@@ -368,3 +370,25 @@ class MusicServiceClient(Client, MusicService):
                 )
             )
         )
+
+
+class Token:
+
+    __nirum_inner_type__ = uuid.UUID
+
+    def __init__(self, value):
+        validate_unboxed_type(value, uuid.UUID)
+        self.value = value
+
+    def __eq__(self, other):
+        return (isinstance(other, Token) and self.value == other.value)
+
+    def __hash__(self):
+        return hash(self.value)
+
+    def __nirum_serialize__(self):
+        return serialize_unboxed_type(self)
+
+    @classmethod
+    def __nirum_deserialize__(cls, value):
+        return deserialize_unboxed_type(cls, value)
