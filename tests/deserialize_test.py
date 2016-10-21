@@ -4,6 +4,7 @@ import uuid
 import typing
 
 from pytest import raises, mark
+from six import text_type
 
 from nirum._compat import utc
 from nirum.serialize import serialize_record_type
@@ -122,7 +123,7 @@ def test_deserialize_multiple_boxed_type(fx_layered_boxed_types):
     [
         (1, int, 1),
         (1.1, float, 1.1),
-        ('hello', str, 'hello'),
+        (u'hello', text_type, 'hello'),
         (True, bool, True),
         ('1.1', decimal.Decimal, decimal.Decimal('1.1')),
         (
@@ -157,8 +158,8 @@ def test_deserialize_primitive(data, t, expect):
         ('a', datetime.datetime),
         ('a', datetime.date),
         ('a', uuid.UUID),
-        (1, str),
-        (1.1, str),
+        (1, text_type),
+        (1.1, text_type),
     ]
 )
 def test_deserialize_primitive_error(data, t):
@@ -166,7 +167,6 @@ def test_deserialize_primitive_error(data, t):
         deserialize_primitive(t, data)
 
 
-from six import text_type
 @mark.parametrize(
     'primitive_type, iter_, expect_iter',
     [
@@ -239,26 +239,28 @@ def test_deserialize_meta_iterable(
 
 def test_deserialize_tuple():
     assert deserialize_tuple_type(typing.Tuple, (1, 2)) == (1, 2)
-    assert deserialize_tuple_type(typing.Tuple[str, int], ('a', 1)) == ('a', 1)
+    assert deserialize_tuple_type(
+        typing.Tuple[text_type, int], (u'a', 1)
+    ) == (u'a', 1)
     with raises(ValueError):
-        deserialize_tuple_type(typing.Tuple[str], ('a', 1))
+        deserialize_tuple_type(typing.Tuple[text_type], (u'a', 1))
 
     with raises(ValueError):
-        deserialize_tuple_type(typing.Tuple[str, str], ('a'))
+        deserialize_tuple_type(typing.Tuple[text_type, text_type], (u'a'))
 
     with raises(ValueError):
-        deserialize_tuple_type(typing.Tuple[str, str], ('a', 1))
+        deserialize_tuple_type(typing.Tuple[text_type, text_type], (u'a', 1))
 
 
 def test_deserialize_optional(fx_record_type):
-    assert deserialize_optional(typing.Optional[str], 'abc') == 'abc'
-    assert deserialize_optional(typing.Optional[str], None) is None
+    assert deserialize_optional(typing.Optional[text_type], u'abc') == u'abc'
+    assert deserialize_optional(typing.Optional[text_type], None) is None
     assert deserialize_optional(typing.Optional[fx_record_type], None) is None
     with raises(ValueError):
-        deserialize_optional(typing.Union[str, int], 'str')
+        deserialize_optional(typing.Union[text_type, int], u'text_type')
     with raises(ValueError):
-        deserialize_optional(typing.Union[str, int], 1)
+        deserialize_optional(typing.Union[text_type, int], 1)
     with raises(ValueError):
-        deserialize_optional(typing.Union[str, int], None)
+        deserialize_optional(typing.Union[text_type, int], None)
     with raises(ValueError):
-        deserialize_optional(typing.Optional[str], 1)
+        deserialize_optional(typing.Optional[text_type], 1)

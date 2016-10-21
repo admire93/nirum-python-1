@@ -134,7 +134,7 @@ def deserialize_primitive(cls, data):
         except decimal.InvalidOperation:
             raise ValueError("'{}' is not a decimal.".format(data))
     elif cls is text_type:
-        if not isinstance(data, str):
+        if not isinstance(data, text_type):
             raise ValueError("'{}' is not a string.".format(data))
         d = cls(data)
     else:

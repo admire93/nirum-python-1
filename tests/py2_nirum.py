@@ -1,12 +1,16 @@
 import enum
 import typing
 import decimal
+import json
 
-from nirum.serialize import serialize_record_type, serialize_boxed_type
-from nirum.deserialize import deserialize_record_type, deserialize_boxed_type
+from nirum.serialize import (serialize_record_type, serialize_boxed_type,
+                             serialize_meta)
+from nirum.deserialize import (deserialize_record_type, deserialize_boxed_type,
+                               deserialize_meta)
 from nirum.validate import (validate_boxed_type, validate_record_type,
                             validate_union_type)
 from nirum.constructs import NameDict, name_dict_type
+from nirum.rpc import Client, Service
 
 
 class Offset:
@@ -298,3 +302,67 @@ class C:
             type(self), self.value
         )
 
+
+class MusicService(Service):
+
+    __nirum_service_methods__ = {
+        'get_music_by_artist_name': {
+            'artist_name': unicode,
+            '_return': typing.Sequence[unicode],
+            '_names': NameDict([
+                ('artist_name', 'artist_name')
+            ])
+        },
+        'incorrect_return': {
+            '_return': unicode,
+            '_names': NameDict([])
+        },
+        'get_artist_by_music': {
+            'music': unicode,
+            '_return': unicode,
+            '_names': NameDict([('music', 'norae')])
+        }
+    }
+    __nirum_method_names__ = NameDict([
+        ('get_music_by_artist_name', 'get_music_by_artist_name'),
+        ('incorrect_return', 'incorrect_return'),
+        ('get_artist_by_music', 'find_artist'),
+    ])
+
+    def get_music_by_artist_name(self, artist_name):
+        raise NotImplementedError('get_music_by_artist_name')
+
+    def incorrect_return(self):
+        raise NotImplementedError('incorrect_return')
+
+    def get_artist_by_music(self, music):
+        raise NotImplementedError('get_artist_by_music')
+
+
+class MusicServiceClient(Client, MusicService):
+
+    def get_music_by_artist_name(self, artist_name):
+        meta = self.__nirum_service_methods__['get_music_by_artist_name']
+        payload = {meta['_names']['artist_name']: serialize_meta(artist_name)}
+        return deserialize_meta(
+            meta['_return'],
+            json.loads(
+                self.remote_call(
+                    self.__nirum_method_names__['get_music_by_artist_name'],
+                    payload=payload
+                )
+            )
+        )
+
+    def get_artist_by_music(self, music):
+        meta = self.__nirum_service_methods__['get_artist_by_music']
+        payload = {meta['_names']['music']: serialize_meta(music)}
+        return deserialize_meta(
+            meta['_return'],
+            json.loads(
+                self.remote_call(
+                    self.__nirum_method_names__['get_artist_by_music'],
+                    payload=payload
+                )
+            )
+        )

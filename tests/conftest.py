@@ -1,32 +1,9 @@
-import enum
-import decimal
-import typing
-import uuid
-
 from pytest import fixture
-from six import PY2, PY3
 
-from nirum.serialize import serialize_record_type, serialize_unboxed_type
-from nirum.deserialize import deserialize_record_type, deserialize_unboxed_type
-from nirum.validate import (validate_unboxed_type, validate_record_type,
-                            validate_union_type)
-from nirum.constructs import NameDict, name_dict_type
-
-if PY2:
-    nirum_fixture_name = 'tests.py2_nirum'
-elif PY3:
-    nirum_fixture_name = 'tests.py3_nirum'
-else:
-    raise ImportError()
+from .nirum_schema import import_nirum_fixture
 
 
-nirum_fixture = __import__(
-    nirum_fixture_name,
-    globals(),
-    locals(),
-    ['A', 'B', 'C', 'Offset', 'Point', 'Shape', 'Rectangle', 'Circle',
-     'Location']
-)
+nirum_fixture = import_nirum_fixture()
 
 
 @fixture
