@@ -22,7 +22,6 @@ from .exc import (InvalidNirumServiceMethodNameError,
                   UnexpectedNirumResponseError)
 from .func import url_endswith_slash
 from .serialize import serialize_meta
-from ._compat import classname
 
 __all__ = 'Client', 'WsgiApp', 'Service', 'client_type', 'service_type'
 JSONType = typing.Mapping[
@@ -43,13 +42,13 @@ class Service:
             except AttributeError:
                 raise InvalidNirumServiceMethodNameError(
                     "{0}.{1} inexist.".format(
-                        classname(self.__class__), method_name
+                        typing._type_repr(self.__class__), method_name
                     )
                 )
             if not callable(method):
                 raise InvalidNirumServiceMethodTypeError(
                     "{0}.{1} isn't callable".format(
-                        classname(self.__class__), method_name
+                        typing._type_repr(self.__class__), method_name
                     )
                 )
 
@@ -172,8 +171,9 @@ class WsgiApp:
                 request,
                 message="Incorrect return type '{0}' "
                         "for '{1}'. expected '{2}'.".format(
-                            classname(result.__class__), request_method,
-                            classname(type_hints['_return'])
+                            typing._type_repr(result.__class__),
+                            request_method,
+                            typing._type_repr(type_hints['_return'])
                         )
             )
         else:
@@ -200,8 +200,8 @@ class WsgiApp:
                 raise NirumProcedureArgumentValueError(
                     "Incorrect type '{0}' for '{1}'. "
                     "expected '{2}'.".format(
-                        classname(data.__class__), behind_name,
-                        classname(type_)
+                        typing._type_repr(data.__class__), behind_name,
+                        typing._type_repr(type_)
                     )
                 )
         return arguments

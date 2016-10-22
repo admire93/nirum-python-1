@@ -4,8 +4,6 @@
 """
 import typing
 
-from ._compat import classname
-
 __all__ = (
     'validate_boxed_type', 'validate_record_type', 'validate_type',
     'validate_unboxed_type', 'validate_union_type',
@@ -44,7 +42,7 @@ def validate_record_type(record):
         if not validate_type(data, type_):
             raise TypeError(
                 'expect {0}.{1} to be {2}'
-                ', but found: {3}'.format(classname(record.__class__),
+                ', but found: {3}'.format(typing._type_repr(record.__class__),
                                           attr, type_, type(data))
             )
     else:
@@ -57,7 +55,7 @@ def validate_union_type(union):
         if not validate_type(data, type_):
             raise TypeError(
                 'expect {0}.{1} to be {2}'
-                ', but found: {3}'.format(classname(union.__class__),
+                ', but found: {3}'.format(typing._type_repr(union.__class__),
                                           attr, type_, type(data))
             )
     else:

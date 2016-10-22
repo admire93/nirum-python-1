@@ -1,16 +1,6 @@
 import datetime
 
-from six import PY3
-
-
-__all__ = 'classname', 'utc'
-
-
-def classname(cls_):
-    if PY3:
-        return cls_.__qualname__
-    else:
-        return cls_.__name__
+__all__ = 'utc',
 
 
 try:
