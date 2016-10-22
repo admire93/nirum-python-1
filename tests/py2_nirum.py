@@ -17,7 +17,7 @@ from nirum.constructs import NameDict, name_dict_type
 from nirum.rpc import Client, Service
 
 
-class Offset:
+class Offset(object):
 
     __nirum_inner_type__ = float
 
@@ -41,7 +41,7 @@ class Offset:
         return hash((self.__class__, self.value))
 
 
-class Point:
+class Point(object):
 
     __slots__ = (
         'left',
@@ -176,7 +176,7 @@ class Circle(Shape):
         )
 
 
-class Location:
+class Location(object):
     # TODO: docstring
 
     __slots__ = (
@@ -223,7 +223,7 @@ class Location:
         return deserialize_record_type(cls, value)
 
 
-class A:
+class A(object):
 
     __nirum_inner_type__ = text_type
 
@@ -251,7 +251,7 @@ class A:
         )
 
 
-class B:
+class B(object):
 
     __nirum_inner_type__ = A
 
@@ -279,7 +279,7 @@ class B:
         )
 
 
-class C:
+class C(object):
 
     __nirum_inner_type__ = B
 
