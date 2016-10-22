@@ -36,11 +36,7 @@ class MockOpener(urllib.request.OpenerDirector):
             req = urllib.request.Request(fullurl, data=data)
         else:
             req = fullurl
-        try:
-            full_url = req.full_url
-        except AttributeError:
-            full_url = req.get_full_url()
-        scheme, host, path, qs, _ = urllib.parse.urlsplit(full_url)
+        scheme, host, path, qs, _ = urllib.parse.urlsplit(req.get_full_url())
         assert self.scheme == scheme
         assert self.host == host
         assert self.path == path
