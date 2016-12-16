@@ -6,6 +6,7 @@ import collections
 import json
 import typing
 
+from six import integer_types, text_type
 from six.moves import urllib
 from werkzeug.exceptions import HTTPException
 from werkzeug.http import HTTP_STATUS_CODES
@@ -270,23 +271,38 @@ class WsgiApp:
         )
 
     def make_response(self, status_code, headers, content):
-        return status_code, content, headers
+        return status_code, headers, content
 
     def _raw_response(self, status_code, response_json, **kwargs):
         response_tuple = self.make_response(
-            status_code, headers={'Content-type': 'application/json'},
+            status_code, headers=[('Content-type', 'application/json')],
             content=json.dumps(response_json).encode('utf-8')
         )
         if not isinstance(response_tuple, collections.Sequence) and \
-                len(response_tuple) == 3 and \
-                isinstance(response_tuple[0], int) and \
-                isinstance(response_tuple[1], str) and \
-                isinstance(response_tuple[2], dict):
+                len(response_tuple) == 3:
             raise TypeError(
                 'make_response() must return a triple of '
                 '(status_code, content, headers): {}'.format(response_tuple)
             )
-        status_code, content, headers = response_tuple
+        status_code, headers, content = response_tuple
+        if not isinstance(status_code, integer_types):
+            raise TypeError(
+                '`status_code` have to be instance of integer. not {}'.format(
+                    typing._type_repr(status_code)
+                )
+            )
+        if not isinstance(headers, collections.Sequence):
+            raise TypeError(
+                '`headers` have to be instance of sequence. not {}'.format(
+                    typing._type_repr(headers)
+                )
+            )
+        if not isinstance(content, bytes):
+            raise TypeError(
+                '`content` have to be instance of bytes. not {}'.format(
+                    typing._type_repr(content)
+                )
+            )
         return WsgiResponse(content, status_code, headers, **kwargs)
 
 
@@ -312,31 +328,46 @@ class Client:
         ))
         return self.do_request(request_url, payload)
 
-    def make_request(self, request_url, payload, headers):
-        return request_url, json.dumps(payload).encode('utf-8'), headers
+    def make_request(self, request_url, headers, payload):
+        return request_url, headers, json.dumps(payload).encode('utf-8')
 
     def do_request(self, request_url, payload):
         request_tuple = self.make_request(
-            request_url, payload,
-            {
-                'Content-type': 'application/json;charset=utf-8',
-                'Accepts': 'application/json'
-            }
+            request_url,
+            [
+                ('Content-type', 'application/json;charset=utf-8'),
+                ('Accepts', 'application/json'),
+            ],
+            payload
         )
         if not isinstance(request_tuple, collections.Sequence) and \
-                len(request_tuple) == 3 and \
-                isinstance(request_tuple[0], str) and \
-                isinstance(request_tuple[1], str) and \
-                isinstance(request_tuple[2], dict):
+                len(request_tuple) == 3:
             raise TypeError(
                 'make_request() must return a triple of '
-                '(request_url, content, header): {}'.format(request_tuple)
+                '(status_code, content, headers): {}'.format(request_tuple)
             )
-        request_url, content, headers = request_tuple
-        request = urllib.request.Request(
-            request_url, data=content,
-            headers=headers
-        )
+        request_url, headers, content = request_tuple
+        if not isinstance(request_url, text_type):
+            raise TypeError(
+                '`request_url` have to be instance of text. not {}'.format(
+                    typing._type_repr(request_url)
+                )
+            )
+        if not isinstance(headers, collections.Sequence):
+            raise TypeError(
+                '`headers` have to be instance of sequence. not {}'.format(
+                    typing._type_repr(headers)
+                )
+            )
+        if not isinstance(content, bytes):
+            raise TypeError(
+                '`content` have to be instance of bytes. not {}'.format(
+                    typing._type_repr(content)
+                )
+            )
+        request = urllib.request.Request(request_url, data=content)
+        for header_name, header_content in headers:
+            request.add_header(header_name, header_content)
         response = self.opener.open(request, None)
         response_text = response.read()
         if 200 <= response.status < 300:

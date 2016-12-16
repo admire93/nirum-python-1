@@ -293,12 +293,13 @@ def test_rpc_client_make_request(monkeypatch):
     naver = 'http://naver.com'
     payload = {'hello': 'world'}
     client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
-    request_url, actual_payload, header = client.make_request(
-        naver, payload,
+    request_url, header, actual_payload = client.make_request(
+        naver,
         {
             'Content-type': 'application/json;charset=utf-8',
             'Accepts': 'application/json'
-        }
+        },
+        payload
     )
     assert request_url == naver
     assert payload == json.loads(actual_payload.decode('utf-8'))
