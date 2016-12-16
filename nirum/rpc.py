@@ -270,7 +270,7 @@ class WsgiApp:
         )
 
     def make_response(self, status_code, headers, content):
-        return status_code, headers, content
+        return status_code, content, headers
 
     def _raw_response(self, status_code, response_json, **kwargs):
         response_tuple = self.make_response(
@@ -280,13 +280,13 @@ class WsgiApp:
         if not isinstance(response_tuple, collections.Sequence) and \
                 len(response_tuple) == 3 and \
                 isinstance(response_tuple[0], int) and \
-                isinstance(response_tuple[1], dict) and \
-                isinstance(response_tuple[2], str):
+                isinstance(response_tuple[1], str) and \
+                isinstance(response_tuple[2], dict):
             raise TypeError(
                 'make_response() must return a triple of '
-                '(status_code, headers, content): {}'.format(response_tuple)
+                '(status_code, content, headers): {}'.format(response_tuple)
             )
-        status_code, headers, content = response_tuple
+        status_code, content, headers = response_tuple
         return WsgiResponse(content, status_code, headers, **kwargs)
 
 
@@ -316,13 +316,23 @@ class Client:
         return request_url, json.dumps(payload).encode('utf-8'), headers
 
     def do_request(self, request_url, payload):
-        request_url, content, headers = self.make_request(
+        request_tuple = self.make_request(
             request_url, payload,
             {
                 'Content-type': 'application/json;charset=utf-8',
                 'Accepts': 'application/json'
             }
         )
+        if not isinstance(request_tuple, collections.Sequence) and \
+                len(request_tuple) == 3 and \
+                isinstance(request_tuple[0], str) and \
+                isinstance(request_tuple[1], str) and \
+                isinstance(request_tuple[2], dict):
+            raise TypeError(
+                'make_request() must return a triple of '
+                '(request_url, content, header): {}'.format(request_tuple)
+            )
+        request_url, content, headers = request_tuple
         request = urllib.request.Request(
             request_url, data=content,
             headers=headers
