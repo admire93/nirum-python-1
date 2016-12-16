@@ -2,6 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~
 
 """
+import collections
 import json
 import typing
 
@@ -178,7 +179,7 @@ class WsgiApp:
                         )
             )
         else:
-            return self.make_response(200, serialize_meta(result))
+            return self._raw_response(200, serialize_meta(result))
 
     def _parse_procedure_arguments(self, type_hints, request_json):
         arguments = {}
@@ -258,7 +259,7 @@ class WsgiApp:
                 )
             ),
         }
-        return self.make_response(
+        return self._raw_response(
             status_code,
             custom_response_map.get(
                 status_code,
@@ -268,13 +269,25 @@ class WsgiApp:
             )
         )
 
-    def make_response(self, status_code, response_json, **kwargs):
-        return WsgiResponse(
-            json.dumps(response_json),
-            status_code,
-            content_type='application/json',
-            **kwargs
+    def make_response(self, status_code, headers, content):
+        return status_code, headers, content
+
+    def _raw_response(self, status_code, response_json, **kwargs):
+        response_tuple = self.make_response(
+            status_code, headers={'Content-type': 'application/json'},
+            content=json.dumps(response_json).encode('utf-8')
         )
+        if not isinstance(response_tuple, collections.Sequence) and \
+                len(response_tuple) == 3 and \
+                isinstance(response_tuple[0], int) and \
+                isinstance(response_tuple[1], dict) and \
+                isinstance(response_tuple[2], str):
+            raise TypeError(
+                'make_response() must return a triple of '
+                '(status_code, headers, content): {}'.format(response_tuple)
+            )
+        status_code, headers, content = response_tuple
+        return WsgiResponse(content, status_code, headers, **kwargs)
 
 
 class Client:
