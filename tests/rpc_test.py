@@ -289,11 +289,13 @@ def test_rpc_client_service(monkeypatch):
     assert client.get_artist_by_music(nine_crimes) == damien_rice
 
 
-def test_rpc_client_make_request(monkeypatch):
+@mark.parametrize('method_name', ['POST', 'post'])
+def test_rpc_client_make_request(method_name, monkeypatch):
     naver = 'http://naver.com'
     payload = {'hello': 'world'}
     client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
-    request_url, header, actual_payload = client.make_request(
+    actual_method, request_url, header, actual_payload = client.make_request(
+        method_name,
         naver,
         {
             'Content-type': 'application/json;charset=utf-8',
@@ -301,7 +303,18 @@ def test_rpc_client_make_request(monkeypatch):
         },
         payload
     )
+    assert actual_method == method_name
     assert request_url == naver
     assert payload == json.loads(actual_payload.decode('utf-8'))
     assert header == {'Content-type': 'application/json;charset=utf-8',
                       'Accepts': 'application/json'}
+    with raises(ValueError):
+        request_url, header, actual_payload = client.make_request(
+            'FOO',
+            naver,
+            {
+                'Content-type': 'application/json;charset=utf-8',
+                'Accepts': 'application/json'
+            },
+            payload
+        )

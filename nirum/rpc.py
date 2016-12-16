@@ -328,11 +328,14 @@ class Client:
         ))
         return self.do_request(request_url, payload)
 
-    def make_request(self, request_url, headers, payload):
-        return request_url, headers, json.dumps(payload).encode('utf-8')
+    def make_request(self, method, request_url, headers, payload):
+        return (
+            method, request_url, headers, json.dumps(payload).encode('utf-8')
+        )
 
     def do_request(self, request_url, payload):
         request_tuple = self.make_request(
+            'POST',
             request_url,
             [
                 ('Content-type', 'application/json;charset=utf-8'),
@@ -346,7 +349,7 @@ class Client:
                 'make_request() must return a triple of '
                 '(status_code, content, headers): {}'.format(request_tuple)
             )
-        request_url, headers, content = request_tuple
+        http_method, request_url, headers, content = request_tuple
         if not isinstance(request_url, text_type):
             raise TypeError(
                 '`request_url` have to be instance of text. not {}'.format(
@@ -365,7 +368,25 @@ class Client:
                     typing._type_repr(content)
                 )
             )
-        request = urllib.request.Request(request_url, data=content)
+        if not isinstance(http_method, text_type):
+            raise TypeError(
+                '`method` have to be instance of str. not {}'.format(
+                    typing._type_repr(http_method)
+                )
+            )
+        http_method = http_method.upper()
+        proper_http_method_names = {
+            'GET', 'POST', 'PUT', 'DELETE',
+            'OPTIONS', 'TRACE', 'CONNECT', 'HEAD'
+        }
+        if http_method not in proper_http_method_names:
+            raise ValueError(
+                '`method` have to be one of {!r}.: {}'.format(
+                    proper_http_method_names, http_method
+                )
+            )
+        request = urllib.request.Request(request_url, data=content,
+                                         method=http_method.upper())
         for header_name, header_content in headers:
             request.add_header(header_name, header_content)
         response = self.opener.open(request, None)
