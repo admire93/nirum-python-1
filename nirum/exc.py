@@ -46,8 +46,7 @@ class HttpError(urllib.error.HTTPError, NirumServiceError):
 
     DEFAULT_ERROR_CODE = 500
 
-    def __init__(self, code=DEFAULT_ERROR_CODE,
-                 description='something goes wrong.', url=None):
+    def __init__(self, code, description, url):
         super(HttpError, self).__init__(
             url=url,
             code=code,
