@@ -288,19 +288,19 @@ class WsgiApp:
         if not isinstance(status_code, integer_types):
             raise TypeError(
                 '`status_code` have to be instance of integer. not {}'.format(
-                    typing._type_repr(status_code)
+                    typing._type_repr(type(status_code))
                 )
             )
         if not isinstance(headers, collections.Sequence):
             raise TypeError(
                 '`headers` have to be instance of sequence. not {}'.format(
-                    typing._type_repr(headers)
+                    typing._type_repr(type(headers))
                 )
             )
         if not isinstance(content, bytes):
             raise TypeError(
                 '`content` have to be instance of bytes. not {}'.format(
-                    typing._type_repr(content)
+                    typing._type_repr(type(content))
                 )
             )
         return WsgiResponse(content, status_code, headers, **kwargs)
@@ -335,7 +335,7 @@ class Client:
 
     def do_request(self, request_url, payload):
         request_tuple = self.make_request(
-            'POST',
+            u'POST',
             request_url,
             [
                 ('Content-type', 'application/json;charset=utf-8'),
@@ -353,25 +353,25 @@ class Client:
         if not isinstance(request_url, text_type):
             raise TypeError(
                 '`request_url` have to be instance of text. not {}'.format(
-                    typing._type_repr(request_url)
+                    typing._type_repr(type(request_url))
                 )
             )
         if not isinstance(headers, collections.Sequence):
             raise TypeError(
                 '`headers` have to be instance of sequence. not {}'.format(
-                    typing._type_repr(headers)
+                    typing._type_repr(type(headers))
                 )
             )
         if not isinstance(content, bytes):
             raise TypeError(
                 '`content` have to be instance of bytes. not {}'.format(
-                    typing._type_repr(content)
+                    typing._type_repr(type(content))
                 )
             )
         if not isinstance(http_method, text_type):
             raise TypeError(
-                '`method` have to be instance of str. not {}'.format(
-                    typing._type_repr(http_method)
+                '`method` have to be instance of text. not {}'.format(
+                    typing._type_repr(type(http_method))
                 )
             )
         http_method = http_method.upper()
@@ -385,8 +385,8 @@ class Client:
                     proper_http_method_names, http_method
                 )
             )
-        request = urllib.request.Request(request_url, data=content,
-                                         method=http_method.upper())
+        request = urllib.request.Request(request_url, data=content)
+        request.get_method = lambda: http_method.upper()
         for header_name, header_content in headers:
             request.add_header(header_name, header_content)
         response = self.opener.open(request, None)

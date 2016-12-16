@@ -264,10 +264,10 @@ def test_wsgi_app_with_behind_name(fx_test_client):
 
 
 @mark.parametrize('url, expected_url', [
-    ('http://foobar.com', 'http://foobar.com/'),
-    ('http://foobar.com/', 'http://foobar.com/'),
-    ('http://foobar.com?a=1#a', 'http://foobar.com/'),
-    ('http://foobar.com/?a=1#a', 'http://foobar.com/'),
+    (u'http://foobar.com', u'http://foobar.com/'),
+    (u'http://foobar.com/', u'http://foobar.com/'),
+    (u'http://foobar.com?a=1#a', u'http://foobar.com/'),
+    (u'http://foobar.com/?a=1#a', u'http://foobar.com/'),
 ])
 def test_rpc_client(url, expected_url):
     assert Client(url).url == expected_url
@@ -280,7 +280,7 @@ def test_rpc_client_error(url):
 
 
 def test_rpc_client_service(monkeypatch):
-    url = 'http://foobar.com/'
+    url = u'http://foobar.com/'
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
@@ -291,7 +291,7 @@ def test_rpc_client_service(monkeypatch):
 
 @mark.parametrize('method_name', ['POST', 'post'])
 def test_rpc_client_make_request(method_name, monkeypatch):
-    naver = 'http://naver.com'
+    naver = u'http://naver.com'
     payload = {'hello': 'world'}
     client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
     actual_method, request_url, header, actual_payload = client.make_request(
@@ -310,7 +310,7 @@ def test_rpc_client_make_request(method_name, monkeypatch):
                       'Accepts': 'application/json'}
     with raises(ValueError):
         request_url, header, actual_payload = client.make_request(
-            'FOO',
+            u'FOO',
             naver,
             {
                 'Content-type': 'application/json;charset=utf-8',
