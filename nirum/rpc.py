@@ -13,12 +13,10 @@ from werkzeug.wrappers import Request as WsgiRequest, Response as WsgiResponse
 
 from .constructs import NameDict
 from .deserialize import deserialize_meta
-from .exc import (HttpError,
-                  InvalidNirumServiceMethodNameError,
+from .exc import (InvalidNirumServiceMethodNameError,
                   InvalidNirumServiceMethodTypeError,
                   NirumProcedureArgumentRequiredError,
                   NirumProcedureArgumentValueError,
-                  NirumUrlError,
                   UnexpectedNirumResponseError)
 from .func import url_endswith_slash
 from .serialize import serialize_meta
@@ -166,8 +164,8 @@ class WsgiApp:
             return self.error(400, request, message=str(e))
         try:
             result = service_method(**arguments)
-        except HttpError as e:
-            return self.error(e.code, request, e.msg)
+        except Exception as e:
+            return self.error(500, request, str(e))
         if not self._check_return_type(type_hints['_return'], result):
             return self.error(
                 400,
@@ -263,8 +261,10 @@ class WsgiApp:
         return self.make_response(
             status_code,
             custom_response_map.get(
-                status_code, self.make_error_response(status_error_tag,
-                                                      status_code_text)
+                status_code,
+                self.make_error_response(
+                    status_error_tag, message or status_code_text
+                )
             )
         )
 
@@ -308,12 +308,7 @@ class Client:
         return req
 
     def do_request(self, request):
-        try:
-            response = self.opener.open(request, None)
-        except urllib.error.URLError as e:
-            raise NirumUrlError(e)
-        except urllib.error.HTTPError as e:
-            raise HttpError(e.code, e.msg)
+        response = self.opener.open(request, None)
         response_text = response.read()
         if 200 <= response.status < 300:
             return response_text.decode('utf-8')
