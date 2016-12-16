@@ -2,6 +2,7 @@ import json
 
 from pytest import fixture, raises, mark
 from six import text_type
+from six.moves import urllib
 from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
@@ -270,3 +271,18 @@ def test_rpc_client_service(monkeypatch):
     damien_rice = 'damien rice'
     assert client.get_music_by_artist_name(damien_rice) == damien_music
     assert client.get_artist_by_music(nine_crimes) == damien_rice
+
+
+def test_rpc_client_make_request(monkeypatch):
+    naver = 'http://naver.com'
+    payload = {'hello': 'world'}
+    client = nf.MusicServiceClient(naver, MockOpener(naver, MusicServiceImpl))
+    request_object = client.make_request(naver, payload)
+    assert isinstance(request_object, urllib.request.Request)
+    assert request_object.get_full_url() == naver
+    assert json.loads(request_object.data.decode('utf-8')) == payload
+    expected_header = {
+        'Content-type': 'application/json;charset=utf-8',
+        'Accepts': 'application/json'
+    }
+    assert request_object.headers == expected_header

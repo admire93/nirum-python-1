@@ -294,14 +294,17 @@ class Client:
         request_url = urllib.parse.urlunsplit((
             scheme, netloc, path, qs, ''
         ))
+        return self.do_request(self.make_request(request_url, payload))
+
+    def make_request(self, request_url, payload):
         req = urllib.request.Request(
             request_url, data=json.dumps(payload).encode('utf-8'),
-            headers={'Content-Type': 'application/json;charset=utf-8',
+            headers={'Content-type': 'application/json;charset=utf-8',
                      'Accepts': 'application/json'}
         )
-        return self.make_request(req)
+        return req
 
-    def make_request(self, request):
+    def do_request(self, request):
         try:
             response = self.opener.open(request, None)
         except urllib.error.URLError as e:
