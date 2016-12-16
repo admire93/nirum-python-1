@@ -310,17 +310,23 @@ class Client:
         request_url = urllib.parse.urlunsplit((
             scheme, netloc, path, qs, ''
         ))
-        return self.do_request(self.make_request(request_url, payload))
+        return self.do_request(request_url, payload)
 
-    def make_request(self, request_url, payload):
-        req = urllib.request.Request(
-            request_url, data=json.dumps(payload).encode('utf-8'),
-            headers={'Content-type': 'application/json;charset=utf-8',
-                     'Accepts': 'application/json'}
+    def make_request(self, request_url, payload, headers):
+        return request_url, json.dumps(payload).encode('utf-8'), headers
+
+    def do_request(self, request_url, payload):
+        request_url, content, headers = self.make_request(
+            request_url, payload,
+            {
+                'Content-type': 'application/json;charset=utf-8',
+                'Accepts': 'application/json'
+            }
         )
-        return req
-
-    def do_request(self, request):
+        request = urllib.request.Request(
+            request_url, data=content,
+            headers=headers
+        )
         response = self.opener.open(request, None)
         response_text = response.read()
         if 200 <= response.status < 300:
