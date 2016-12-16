@@ -7,7 +7,7 @@ from six.moves import urllib
 __all__ = (
     'InvalidNirumServiceMethodNameError',
     'InvalidNirumServiceMethodTypeError',
-    'NirumHttpError',
+    'HttpError',
     'NirumProcedureArgumentError',
     'NirumProcedureArgumentRequiredError',
     'NirumProcedureArgumentValueError',
@@ -41,8 +41,25 @@ class NirumProcedureArgumentValueError(NirumProcedureArgumentError):
     """WIP"""
 
 
-class NirumHttpError(urllib.error.HTTPError, NirumServiceError):
-    """TODO"""
+class HttpError(urllib.error.HTTPError, NirumServiceError):
+    """Nirum HTTP Error."""
+
+    DEFAULT_ERROR_CODE = 500
+
+    def __init__(self, code=DEFAULT_ERROR_CODE,
+                 description='something goes wrong.', url=None):
+        super(HttpError, self).__init__(
+            url=url,
+            code=code,
+            msg=description,
+            hdrs=None, fp=None
+        )
+        self.description = description
+
+    def __repr__(self):
+        return 'HttpError(code={}, description={})'.format(
+            self.code, self.description
+        )
 
 
 class NirumUrlError(urllib.error.URLError, NirumServiceError):
@@ -50,8 +67,8 @@ class NirumUrlError(urllib.error.URLError, NirumServiceError):
 
     def __init__(self, exc):
         self.text = exc.read()
-        super().__init__(exc.reason)
+        super(NirumUrlError, self).__init__(exc.reason)
 
 
-class UnexpectedNirumResponseError(NirumHttpError):
+class UnexpectedNirumResponseError(HttpError):
     """TODO"""

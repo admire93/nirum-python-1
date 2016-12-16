@@ -7,7 +7,8 @@ from werkzeug.test import Client as TestClient
 from werkzeug.wrappers import Response
 
 from nirum.exc import (InvalidNirumServiceMethodTypeError,
-                       InvalidNirumServiceMethodNameError)
+                       InvalidNirumServiceMethodNameError,
+                       HttpError)
 from nirum.rpc import Client, WsgiApp
 from nirum.test import MockOpener
 
@@ -35,6 +36,9 @@ class MusicServiceImpl(nf.MusicService):
             if music in v:
                 return k
         return u'none'
+
+    def raise_bad_request(self):
+        raise HttpError(400, 'hello world')
 
 
 class MusicServiceNameErrorImpl(nf.MusicService):
@@ -81,6 +85,21 @@ def assert_response(response, status_code, expect_json):
         response.get_data(as_text=True)
     )
     assert actual_response_json == expect_json
+
+
+def test_rpc_internal_error(fx_test_client):
+    response = fx_test_client.post('/?method=raise_bad_request')
+    assert response.status_code == 400
+    actual_response_json = json.loads(
+        response.get_data(as_text=True)
+    )
+    expected_json = {
+        '_type': 'error',
+        '_tag': 'bad_request',
+        'message': 'hello world'
+
+    }
+    assert actual_response_json == expected_json
 
 
 def test_wsgi_app_error(fx_test_client):

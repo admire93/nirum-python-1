@@ -13,9 +13,9 @@ from werkzeug.wrappers import Request as WsgiRequest, Response as WsgiResponse
 
 from .constructs import NameDict
 from .deserialize import deserialize_meta
-from .exc import (InvalidNirumServiceMethodNameError,
+from .exc import (HttpError,
+                  InvalidNirumServiceMethodNameError,
                   InvalidNirumServiceMethodTypeError,
-                  NirumHttpError,
                   NirumProcedureArgumentRequiredError,
                   NirumProcedureArgumentValueError,
                   NirumUrlError,
@@ -164,7 +164,10 @@ class WsgiApp:
         except (NirumProcedureArgumentValueError,
                 NirumProcedureArgumentRequiredError) as e:
             return self.error(400, request, message=str(e))
-        result = service_method(**arguments)
+        try:
+            result = service_method(**arguments)
+        except HttpError as e:
+            return self.error(e.code, request, e.msg)
         if not self._check_return_type(type_hints['_return'], result):
             return self.error(
                 400,
@@ -177,7 +180,7 @@ class WsgiApp:
                         )
             )
         else:
-            return self._json_response(200, serialize_meta(result))
+            return self.make_response(200, serialize_meta(result))
 
     def _parse_procedure_arguments(self, type_hints, request_json):
         arguments = {}
@@ -214,7 +217,7 @@ class WsgiApp:
         else:
             return True
 
-    def _make_error_response(self, error_type, message=None):
+    def make_error_response(self, error_type, message=None):
         """Create error response json temporary.
 
         .. code-block:: nirum
@@ -243,29 +246,29 @@ class WsgiApp:
         status_code_text = HTTP_STATUS_CODES.get(status_code, 'http error')
         status_error_tag = status_code_text.lower().replace(' ', '_')
         custom_response_map = {
-            404: self._make_error_response(
+            404: self.make_error_response(
                 status_error_tag,
                 'The requested URL {} was not found on this service.'.format(
                     request.path
                 )
             ),
-            400: self._make_error_response(status_error_tag, message),
-            405: self._make_error_response(
+            400: self.make_error_response(status_error_tag, message),
+            405: self.make_error_response(
                 status_error_tag,
                 'The requested URL {} was not allowed HTTP method {}.'.format(
                     request.path, request.method
                 )
             ),
         }
-        return self._json_response(
+        return self.make_response(
             status_code,
             custom_response_map.get(
-                status_code, self._make_error_response(status_error_tag,
-                                                       status_code_text)
+                status_code, self.make_error_response(status_error_tag,
+                                                      status_code_text)
             )
         )
 
-    def _json_response(self, status_code, response_json, **kwargs):
+    def make_response(self, status_code, response_json, **kwargs):
         return WsgiResponse(
             json.dumps(response_json),
             status_code,
@@ -310,7 +313,7 @@ class Client:
         except urllib.error.URLError as e:
             raise NirumUrlError(e)
         except urllib.error.HTTPError as e:
-            raise NirumHttpError(e.url, e.code, e.msg, e.hdrs, e.fp)
+            raise HttpError(e.code, e.msg)
         response_text = response.read()
         if 200 <= response.status < 300:
             return response_text.decode('utf-8')
