@@ -39,3 +39,7 @@ else:
     def get_union_types(type_):
         if is_union_type(type_):
             return type_.__args__
+
+
+def get_abstract_param_types(type_):
+    return type_.__parameters__ if type_.__parameters__ else type_.__args__
