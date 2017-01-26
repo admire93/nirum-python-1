@@ -12,6 +12,8 @@ import uuid
 from iso8601 import iso8601, parse_date
 from six import text_type
 
+from ._compat import get_union_types, is_union_type
+
 __all__ = (
     'deserialize_abstract_type',
     'deserialize_boxed_type',
@@ -142,11 +144,12 @@ def deserialize_primitive(cls, data):
 
 
 def deserialize_optional(cls, data):
-    if not any(isinstance(None, ut) for ut in cls.__union_params__):
+    union_types = get_union_types(cls)
+    if not any(isinstance(None, ut) for ut in union_types):
         raise ValueError(cls)
     if data is None:
         return data
-    for union_type in cls.__union_params__:
+    for union_type in union_types:
         if isinstance(None, union_type):
             continue
         else:
@@ -174,7 +177,7 @@ def deserialize_meta(cls, data):
         d = deserialize_tuple_type(cls, data)
     elif is_support_abstract_type(cls):
         d = deserialize_abstract_type(cls, data)
-    elif type(cls) is typing.UnionMeta:
+    elif is_union_type(cls):
         d = deserialize_optional(cls, data)
     elif callable(cls) and cls in _NIRUM_PRIMITIVE_TYPE:
         d = deserialize_primitive(cls, data)

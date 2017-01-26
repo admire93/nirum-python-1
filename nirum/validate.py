@@ -4,6 +4,8 @@
 """
 import typing
 
+from ._compat import get_union_types, is_union_type
+
 __all__ = (
     'validate_boxed_type', 'validate_record_type', 'validate_type',
     'validate_unboxed_type', 'validate_union_type',
@@ -15,9 +17,9 @@ def validate_type(data, type_):
     try:
         instance_check = isinstance(data, type_)
     except TypeError:
-        if type(type_) is typing.UnionMeta:
+        if is_union_type(type_):
             instance_check = any(
-                isinstance(data, t) for t in type_.__union_params__
+                isinstance(data, t) for t in get_union_types(type_)
             )
         else:
             raise ValueError('{!r} cannot validated.'.format(type_))
