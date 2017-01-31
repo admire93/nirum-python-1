@@ -12,7 +12,7 @@ import uuid
 from iso8601 import iso8601, parse_date
 from six import text_type
 
-from ._compat import get_union_types, is_union_type
+from ._compat import get_tuple_param_types, get_union_types, is_union_type
 
 __all__ = (
     'deserialize_abstract_type',
@@ -98,17 +98,22 @@ def deserialize_abstract_type(cls, data):
 
 
 def deserialize_tuple_type(cls, data):
-    if not cls.__tuple_params__:
+    tuple_types = get_tuple_param_types(cls)
+    if tuple_types is None and isinstance(data, tuple):
+        return data
+    tuple_type_length = len(tuple_types)
+    data_length = len(data)
+    if not tuple_types:
         return tuple(data)
-    if len(cls.__tuple_params__) != len(data):
+    if tuple_type_length != data_length:
         raise ValueError(
             'Expected {}-tuple, not {}-tuple'.format(
-                len(cls.__tuple_params__), len(data)
+                tuple_type_length, data_length
             )
         )
     return tuple(
         deserialize_meta(t, d)
-        for t, d in zip(cls.__tuple_params__, data)
+        for t, d in zip(tuple_types, data)
     )
 
 

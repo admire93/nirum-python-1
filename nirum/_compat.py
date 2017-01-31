@@ -27,11 +27,14 @@ except AttributeError:
 
 if hasattr(typing, 'UnionMeta'):
     def is_union_type(type_):
-        return isinstance(type_, typing.UnionMeta)
+        return isinstance(type_, typing.UnionMeta) or \
+            isinstance(type(type_), typing.UnionMeta)
 
     def get_union_types(type_):
         if is_union_type(type_):
-            return type_.__union_params__
+            return type_.__union_params__ \
+                if hasattr(type_, '__union_params__') \
+                else type_.__args__
 else:
     def is_union_type(type_):
         return isinstance(type_, typing._Union)
@@ -43,3 +46,11 @@ else:
 
 def get_abstract_param_types(type_):
     return type_.__parameters__ if type_.__parameters__ else type_.__args__
+
+
+if hasattr(typing.Tuple, '__tuple_params__'):
+    def get_tuple_param_types(type_):
+        return type_.__tuple_params__
+else:
+    def get_tuple_param_types(type_):
+        return type_.__args__

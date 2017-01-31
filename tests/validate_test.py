@@ -55,4 +55,4 @@ def test_validate_layered_boxed_types(fx_layered_boxed_types):
 
 
 def test_validate_abstract_set():
-    assert validate_type({1,2,3}, typing.AbstractSet[int])
+    assert validate_type({1, 2, 3}, typing.AbstractSet[int])
