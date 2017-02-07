@@ -34,8 +34,7 @@ if hasattr(typing, '_Union'):
             return type_.__args__
 else:
     def is_union_type(type_):
-        return isinstance(type_, typing.UnionMeta) or \
-            isinstance(type(type_), typing.UnionMeta)
+        return isinstance(type_, typing.UnionMeta)
 
     def get_union_types(type_):
         if is_union_type(type_):
