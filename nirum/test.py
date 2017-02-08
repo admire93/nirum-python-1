@@ -1,6 +1,6 @@
 import socket
 
-from six import PY2
+from six import PY3
 from six.moves import urllib
 from six.moves.http_client import HTTPResponse
 from werkzeug.test import Client
@@ -16,9 +16,8 @@ class MockHttpResponse(HTTPResponse):
 
     def __init__(self, body, status_code):
         self.body = body
-        if PY2:
-            self.code = status_code
-        else:
+        self.code = status_code
+        if PY3:
             self.status = status_code
 
     def read(self):

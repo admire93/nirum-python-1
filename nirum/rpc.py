@@ -391,9 +391,7 @@ class Client:
             request.add_header(header_name, header_content)
         response = self.opener.open(request, None)
         response_text = response.read()
-        response_code = response.code if hasattr(response, 'code') \
-            else response.status
-        if 200 <= response_code < 300:
+        if 200 <= response.code < 300:
             return response_text.decode('utf-8')
         else:
             raise UnexpectedNirumResponseError(response_text)
