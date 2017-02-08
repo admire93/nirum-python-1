@@ -279,8 +279,8 @@ def test_rpc_client_error(url):
         Client(url)
 
 
-def test_rpc_client_service(monkeypatch):
-    url = u'http://foobar.com/'
+@mark.parametrize('url', [u'http://foobar.com/', u'http://foobar.com/rpc/'])
+def test_rpc_client_service(monkeypatch, url):
     client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
     nine_crimes = '9 crimes'
     damien_music = [nine_crimes, 'Elephant']
