@@ -289,6 +289,13 @@ def test_rpc_client_service(monkeypatch, url):
     assert client.get_artist_by_music(nine_crimes) == damien_rice
 
 
+def test_rpc_mock_opener_null_app(monkeypatch):
+    url = u'http://foobar.com/rpc/'
+    client = nf.MusicServiceClient(url, MockOpener(url, MusicServiceImpl))
+    response = client.opener.wsgi_test_client.post('/')
+    assert response.status_code == 404
+
+
 @mark.parametrize('method_name', ['POST', 'post'])
 def test_rpc_client_make_request(method_name, monkeypatch):
     naver = u'http://naver.com'

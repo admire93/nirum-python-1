@@ -32,10 +32,15 @@ class MockOpener(urllib.request.OpenerDirector):
         self.scheme, self.host, self.path, _, _ = urllib.parse.urlsplit(
             self.url
         )
+
+        def null_app(environ, start_response):
+            start_response('404 Not Found', [('Content-Type', 'text/plain')])
+            return ['Not Found']
+
         wsgi_app = WsgiApp(service_impl_cls())
         if self.path != '/':
             self.wsgi_app = DispatcherMiddleware(
-                wsgi_app, {self.path[:-1]: wsgi_app}
+                null_app, {self.path[:-1]: wsgi_app}
             )
         else:
             self.wsgi_app = wsgi_app
