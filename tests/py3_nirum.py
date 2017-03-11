@@ -307,6 +307,7 @@ class C:
 
 class MusicService(Service):
 
+    __nirum_schema_version__ = '0.0.1'
     __nirum_service_methods__ = {
         'get_music_by_artist_name': {
             'artist_name': str,
