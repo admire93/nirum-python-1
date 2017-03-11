@@ -35,6 +35,15 @@ class Service:
     __nirum_service_methods__ = {}
     __nirum_method_names__ = NameDict([])
 
+    @property
+    def schema_version(self):
+        try:
+            schema_version = getattr(self, '__nirum_schema_version__')
+        except AttributeError:
+            raise NotImplementedError()
+        else:
+            return schema_version
+
     def __init__(self):
         for method_name in self.__nirum_service_methods__:
             try:
@@ -114,11 +123,32 @@ class WsgiApp:
             return self.error(405, request)
         payload = request.get_data(as_text=True) or '{}'
         request_method = request.args.get('method')
+        schema_version = request.args.get('_version')
         if not request_method:
             return self.error(
                 400, request,
                 message="A query string parameter method= is missing."
             )
+        if schema_version:
+            try:
+                service_schema_version = self.service.schema_version
+            except NotImplementedError:
+                return self.error(
+                    400,
+                    request,
+                    message='Server version is not implemented.'
+                )
+            else:
+                if service_schema_version != schema_version:
+                    return self.error(
+                        400,
+                        request,
+                        message='Server version is {}, '
+                        'but given client version is {}.'.format(
+                            service_schema_version,
+                            schema_version
+                        )
+                    )
         name_map = self.service.__nirum_method_names__
         try:
             method_facial_name = name_map.behind_names[request_method]
@@ -334,6 +364,12 @@ class Client:
         )
 
     def do_request(self, request_url, payload):
+        try:
+            schema_version = self.schema_version
+        except NotImplementedError:
+            raise ValueError('Missing `__nirum_schema_version__`')
+        else:
+            payload.update({'_version': schema_version})
         request_tuple = self.make_request(
             u'POST',
             request_url,
