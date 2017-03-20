@@ -79,6 +79,7 @@ def test_list():
         immutable_list + [3]
 
     assert isinstance(immutable_list, collections.Sequence)
+    assert not isinstance(immutable_list, collections.MutableSequence)
     assert immutable_list[0] == 1
     assert len(immutable_list) == 2
     assert 2 in immutable_list
