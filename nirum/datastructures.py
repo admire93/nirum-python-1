@@ -6,7 +6,7 @@
 """
 import collections
 
-__all__ = 'Map', 'ImmutableList'
+__all__ = 'List', 'Map'
 
 
 class Map(collections.Mapping):
@@ -51,7 +51,7 @@ class Map(collections.Mapping):
         return '{0.__module__}.{0.__name__}({1})'.format(type(self), args)
 
 
-class ImmutableList(collections.Sequence):
+class List(collections.Sequence):
 
     def __init__(self, l):
         self.l = l
@@ -71,5 +71,5 @@ class ImmutableList(collections.Sequence):
     def index(self, item):
         return self.l.index(item)
 
-    def count(self):
-        return self.l.count()
+    def count(self, item):
+        return self.l.count(item)
