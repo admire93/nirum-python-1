@@ -73,3 +73,7 @@ class List(collections.Sequence):
 
     def count(self, item):
         return self.l.count(item)
+
+
+map_type = Map
+list_type = List
