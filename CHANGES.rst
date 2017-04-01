@@ -13,7 +13,7 @@ To be released.
   [:issue:`66`]
 - Added :class:`nirum.datastructures.List` which is an immutable list.
   [:issue:`49`]
-- aliased :class:`~nirum.datastructures.Map` as ``map_type``,
+- Aliased :class:`~nirum.datastructures.Map` as ``map_type``, and
   :class:`~nirum.datastructures.List` as ``list_type`` to avoid
   confliction with name of record type.
 
