@@ -14,8 +14,8 @@ To be released.
 - Added :class:`nirum.datastructures.List` which is an immutable list.
   [:issue:`49`]
 - Aliased :class:`~nirum.datastructures.Map` as ``map_type``, and
-  :class:`~nirum.datastructures.List` as ``list_type`` to avoid
-  confliction with name of record type.
+  :class:`~nirum.datastructures.List` as ``list_type`` to avoid name
+  conflict with user-defined types.
 
 
 __ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
