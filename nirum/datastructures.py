@@ -6,7 +6,7 @@
 """
 import collections
 
-__all__ = 'List', 'Map'
+__all__ = 'List', 'Map', 'list_type', 'map_type'
 
 
 class Map(collections.Mapping):
