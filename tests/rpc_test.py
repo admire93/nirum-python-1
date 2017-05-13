@@ -91,20 +91,6 @@ def assert_response(response, status_code, expect_json):
     assert actual_response_json == expect_json
 
 
-def test_rpc_internal_error(fx_test_client):
-    response = fx_test_client.post('/?method=raise_application_error_request')
-    assert response.status_code == 500, response.get_data(as_text=True)
-    actual_response_json = json.loads(
-        response.get_data(as_text=True)
-    )
-    expected_json = {
-        '_type': 'error',
-        '_tag': 'internal_server_error',
-        'message': 'hello world'
-    }
-    assert actual_response_json == expected_json
-
-
 def test_wsgi_app_error(fx_test_client):
     # method not allowed
     assert_response(

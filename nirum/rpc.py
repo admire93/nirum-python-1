@@ -166,9 +166,9 @@ class WsgiApp:
         except (NirumProcedureArgumentValueError,
                 NirumProcedureArgumentRequiredError) as e:
             return self.error(400, request, message=str(e))
-        method_error = self.service.__nirum_method_error_types__[
-            method_facial_name
-        ]
+        method_error = self.service.__nirum_method_error_types__.get(
+            method_facial_name, ()
+        )
         try:
             result = service_method(**arguments)
         except method_error as e:
