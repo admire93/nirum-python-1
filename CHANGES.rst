@@ -29,6 +29,6 @@ Release on May 2nd, 2017.
 Version 0.5.0
 -------------
 
-- Service methods should be possible to specify its error type. [:issue:`71`]
+- Service methods became able to specify its error type. [:issue:`71`]
 
 __ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
