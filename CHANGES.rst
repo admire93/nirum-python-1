@@ -30,5 +30,7 @@ Version 0.5.0
 -------------
 
 - Service methods became able to specify its error type. [:issue:`71`]
+- Add `nirum-server` command to run nirum service simply.
+
 
 __ https://github.com/spoqa/nirum/blob/f1629787f45fef17eeab8b4f030c34580e0446b8/docs/serialization.md
