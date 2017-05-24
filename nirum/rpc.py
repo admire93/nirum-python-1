@@ -395,11 +395,11 @@ class Client:
         for header_name, header_content in headers:
             request.add_header(header_name, header_content)
         response = self.opener.open(request, None)
-        response_text = response.read()
+        response_text = response.read().decode('utf-8')
         if 200 <= response.code < 300:
-            return response_text.decode('utf-8')
+            return response_text
         else:
-            raise UnexpectedNirumResponseError(response_text.decode('utf-8'))
+            raise UnexpectedNirumResponseError(response_text)
 
 
 # To eliminate imported vars from being overridden by
