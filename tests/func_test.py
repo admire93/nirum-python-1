@@ -1,17 +1,20 @@
+import collections
+
 from pytest import raises
 
 from nirum.func import import_string
 
 
 def test_import_string():
-    assert import_string('builtins:int') == int
-    assert import_string('builtins:int(1)') == 1
+    assert import_string('collections:OrderedDict') == collections.OrderedDict
+    assert import_string('collections:OrderedDict({"a": 1})') == \
+            collections.OrderedDict({"a": 1})
     with raises(ValueError):
         # malformed
         import_string('world')
-    with raises(ValueError):
+    with raises(NameError):
         # coudn't import
-        import_string('builtins:world')
-    with raises(ValueError):
+        import_string('os:world')
+    with raises(ImportError):
         # coudn't import
         import_string('os.hello:world')
