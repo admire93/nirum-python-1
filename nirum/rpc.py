@@ -413,9 +413,9 @@ client_type = Client
 
 def main():
     parser = argparse.ArgumentParser(description='Nirum service runner')
-    parser.add_argument('-H', '--host', help='the host for the application',
+    parser.add_argument('-H', '--host', help='the host to listen',
                         default='0.0.0.0')
-    parser.add_argument('-p', '--port', help='the port for the server',
+    parser.add_argument('-p', '--port', help='the port number to listen',
                         type=int, default=9322)
     parser.add_argument('-d', '--debug', help='debug mode',
                         action='store_true', default=False)
