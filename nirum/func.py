@@ -33,10 +33,7 @@ def import_string(imp):
             "malformed expression: {}, have to be x.y:z(...)".format(imp)
         )
     module_name = m.group('modname')
-    try:
-        import_root_mod = __import__(module_name)
-    except ImportError:
-        raise ValueError("Can't import {}".format(imp))
+    import_root_mod = __import__(module_name)
     # it is used in `eval()`
     import_mod = reduce(getattr, module_name.split('.')[1:], import_root_mod) # noqa
     class_expression = m.group('clsexp')
