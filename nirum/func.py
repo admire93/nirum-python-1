@@ -38,7 +38,7 @@ def import_string(imp):
     import_mod = reduce(getattr, module_name.split('.')[1:], import_root_mod) # noqa
     class_expression = m.group('clsexp')
     try:
-        v = eval('import_mod.{}'.format(class_expression))
+        v = eval(class_expression, import_mod.__dict__, {})
     except AttributeError:
         raise ValueError("Can't import {}".format(imp))
     else:
