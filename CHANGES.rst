@@ -6,11 +6,6 @@ Version 0.5.2
 
 To be released.
 
-- CHANGES.rst now has to be written to pass CI on pull request. [`#85`_]
-- git tags have to be the same to python package version.
-
-.. _#85: https://github.com/spoqa/nirum-python/issues/85
-
 
 Version 0.5.1
 -------------
