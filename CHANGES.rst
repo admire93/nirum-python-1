@@ -6,6 +6,9 @@ Version 0.5.2
 
 To be released.
 
+- CHANGES.rst have to be written to pass CI on Pull request. [`#85`_]
+- git tag have to be equivalent with python package version.
+
 
 Version 0.5.1
 -------------
@@ -34,6 +37,7 @@ Released on June 22, 2017.
 .. _#78: https://github.com/spoqa/nirum-python/pull/78
 .. _#83: https://github.com/spoqa/nirum-python/issues/83
 .. _#80: https://github.com/spoqa/nirum-python/pull/80
+.. _#85: https://github.com/spoqa/nirum-python/issues/85
 
 
 Version 0.5.0
