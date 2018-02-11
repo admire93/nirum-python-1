@@ -19,6 +19,7 @@ To be released.
   every generated union classes (see also the `pull request`__),
   ``nirum.deserialize.deserialize_union_type()`` function also became to
   lerverage it if present.
+- Fixed ``NameDict`` should be initialized with dictionary.
 
 __ https://github.com/spoqa/nirum/pull/192
 __ https://github.com/spoqa/nirum/pull/192
