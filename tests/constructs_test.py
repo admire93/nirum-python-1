@@ -21,3 +21,9 @@ def test_name_dict_assert():
         NameDict([('left', 'x'), ('right', 'x')])
     with raises(AssertionError):
         NameDict([('left', 'x'), ('left', 'y')])
+
+
+def test_name_init_with_dict():
+    nd = NameDict({'foo': 'bar'})
+    assert nd.behind_names == {'bar': 'foo'}
+    assert nd['foo'] == 'bar'
